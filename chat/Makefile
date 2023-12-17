@@ -1,8 +1,8 @@
-OBJS_SERVER    = icrypto.o isock.o server.o
-OBJS_CLIENT    = icrypto.o isock.o client.o
-SOURCE_SERVER  = icrypto.c isock.c server.c
-SOURCE_CLIENT  = icrypto.c isock.c client.c
-HEADER         = icrypto.h isock.h
+OBJS_SERVER    = encryption.o socket.o server.o
+OBJS_CLIENT    = encryption.o socket.o client.o
+SOURCE_SERVER  = encryption.c socket.c server.c
+SOURCE_CLIENT  = encryption.c socket.c client.c
+HEADER         = encryption.h socket.h
 OUT_SERVER     = server
 OUT_CLIENT     = client
 CC             = gcc
