@@ -6,8 +6,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
-#include "isock.h"
-#include "icrypto.h"
+#include "socket.h"
+#include "encryption.h"
 
 #ifdef ENABLE_CRYPTO
 static unsigned char ENC_AES_KEY[] = {0, 10, 25, 43, 4, 135, 246, 78, 118, 29, 101, 156, 126, 16, 15, 1};
