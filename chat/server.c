@@ -6,8 +6,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
-#include "isock.h"
-#include "icrypto.h"
+#include "socket.h"
+#include "encryption.h"
 
 #define MAX_CHILD_PROCESS 64
 
