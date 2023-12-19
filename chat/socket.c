@@ -45,7 +45,7 @@ Returns:
     message_size if received successfully.
     -1           if client already closed socket.
 */
-int ireceive(int target, char *buffer)
+int ireceive(int target, void *buffer)
 {
     int received = 0;
 
