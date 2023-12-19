@@ -63,19 +63,6 @@ void handle_sigterm_in_child()
     close(CHILD_SOCK);
 }
 
-void reverse_string(char *string, int length)
-{
-    int start = 0, end = length - 1;
-    while (start < end)
-    {
-        char temp = string[start];
-        string[start] = string[end];
-        string[end] = temp;
-        start++;
-        end--;
-    }
-}
-
 // New function to handle outgoing messages from server to client
 void send_to_client(int client, struct sockaddr_in *addr)
 {
@@ -119,27 +106,12 @@ void serve_client(int client, struct sockaddr_in *addr)
         if (length < 0)
             return;
         printf("%s", decrypted);
-
-        reverse_string(decrypted, length - 1);
-
-        memset(data, 0, received);
-        // int send = encrypt_aes128((const unsigned char *)decrypted, length, ENC_AES_KEY, (unsigned char *)data);
-        // printf("DEBUG: encrypted message with %i size\n", send);
-
+        
 #else
-        printf("%s\n", data);
-        // reverse_string(data, received - 1);
-        // int send = received;
+        printf("%s", data);
 
 #endif
-
-        // if (isend(client, data, send) < 0)
-        //     return;
-        // printf("INFO: sent %i bytes to %s:%i\n",
-        //        send,
-        //        inet_ntoa(addr->sin_addr),
-        //        addr->sin_port);
-
+        
         memset(data, 0, received);
     }
 }
