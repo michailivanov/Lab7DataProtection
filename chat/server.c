@@ -123,13 +123,13 @@ void serve_client(int client, struct sockaddr_in *addr)
         reverse_string(decrypted, length - 1);
 
         memset(data, 0, received);
-        // int send = encrypt_aes128((const unsigned char *)decrypted, length, ENC_AES_KEY, (unsigned char *)data);
+        int send = encrypt_aes128((const unsigned char *)decrypted, length, ENC_AES_KEY, (unsigned char *)data);
         // printf("DEBUG: encrypted message with %i size\n", send);
 
 #else
         printf("-> %s\n", data);
         // reverse_string(data, received - 1);
-        // int send = received;
+        int send = received;
 
 #endif
 
