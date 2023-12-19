@@ -30,6 +30,7 @@ void send_to_server(int sock)
 
 #ifdef ENABLE_CRYPTO
 
+        // Encrypt data
         unsigned char encrypted[65535] = {0};
         int length = encrypt_aes128((const unsigned char *)buffer, size, ENC_AES_KEY, encrypted);
         isend(sock, encrypted, length);
@@ -45,46 +46,13 @@ void send_to_server(int sock)
     }
 }
 
-void receive_from_server(int sock)
-{
-    char buffer[65535] = {0};
-    while (1)
-    {
-        int received = ireceive(sock, buffer);
-        if (received < 0)
-        {
-            printf("\nINFO: server has been closed.\n");
-            handle_exit();
-        }
-
-#ifdef ENABLE_CRYPTO
-
-        char decrypted[65535];
-        int length = decrypt_aes128((const unsigned char *)buffer, received, ENC_AES_KEY, (unsigned char *)decrypted);
-        if (length < 0)
-        {
-            handle_exit();
-        }
-
-        // Process the received message (in decrypted form) if needed
-
-#else
-
-        // Process the received message if needed
-
-#endif
-
-        // Example: Print the received message
-        printf("Received message from server: %s\n", decrypted);
-
-        // Clear buffer
-        memset(buffer, 0, received);
-    }
-}
-
 int main(int argc, const char *argv[])
 {
     signal(SIGINT, handle_exit);
+
+    if (argc != 3)
+        return -1;
+
     int sock = iconnect(argv[1], atoi(argv[2]), connect);
     if (sock < 0)
     {
@@ -108,8 +76,37 @@ int main(int argc, const char *argv[])
         exit(0);
     }
 
-    // Receive data from the server
-    receive_from_server(sock);
+    char buffer[65535] = {0};
+    while (1)
+    {
+        // Receive data from server
+        int received = ireceive(sock, buffer);
+        if (received < 0)
+        {
+            printf("\nINFO: server has been closed.\n");
+            handle_exit();
+        }
+
+#ifdef ENABLE_CRYPTO
+
+        // Try to decrypt data, close connection if failed
+        char decrypted[65535] = {0};
+        int length = decrypt_aes128((const unsigned char *)buffer, received, ENC_AES_KEY, (unsigned char *)decrypted);
+        if (length < 0)
+        {
+            handle_exit();
+        }
+        printf("%s", decrypted);
+
+#else
+
+        printf("%s", buffer);
+
+#endif
+
+        // Clear buffer
+        memset(buffer, 0, received);
+    }
 
     return 0;
 }
