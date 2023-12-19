@@ -111,10 +111,8 @@ void serve_client(int client, struct sockaddr_in *addr)
         int received = ireceive(client, data);
         if (received < 0)
             return;
-        printf("INFO: received %i bytes from %s:%i\n",
-               received,
-               inet_ntoa(addr->sin_addr),
-               addr->sin_port);
+        printf("INFO: data: %s\n",
+               data;
 
 #ifdef ENABLE_CRYPTO
 
