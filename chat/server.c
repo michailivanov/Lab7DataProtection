@@ -78,8 +78,6 @@ void serve_client(int client, struct sockaddr_in *addr)
         if (length < 0)
             return;
 
-        memset(data, 0, received);
-
         // Process the received message (in decrypted form) if needed
 
 #else
@@ -93,8 +91,12 @@ void serve_client(int client, struct sockaddr_in *addr)
 
         // Respond to the client if needed
 
+        // Example: Send a response back to the client
+        // strcpy(data, "Server received your message");
+        // isend(client, data, strlen(data));
+
         // Clear the buffer
-        memset(data, 0, received);
+        memset(data, 0, sizeof(data));
     }
 }
 
