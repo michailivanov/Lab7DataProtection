@@ -112,7 +112,7 @@ void serve_client(int client, struct sockaddr_in *addr)
         if (received < 0)
             return;
         printf("INFO: data: %s\n",
-               data;
+               data);
 
 #ifdef ENABLE_CRYPTO
 
