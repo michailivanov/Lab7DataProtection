@@ -1,7 +1,5 @@
 #include "socket.h"
 
-#define MAX_MESSAGE_LENGTH 80
-
 /* Create a socket and try to bind it to given address.
 
 Returns:
@@ -48,30 +46,30 @@ Returns:
 int ireceive(int target, void *buffer)
 {
     int received = 0;
-    char *charBuffer = (char *)buffer; // Type cast void * to char *
-
-    while (received < MAX_MESSAGE_LENGTH)
+    unsigned short expected;
+    while (received < 2)
     {
-        int ur = recv(target, charBuffer + received, 1, 0);
-
-        if (ur <= 0 || charBuffer[received] == '\n')
+        int ur = 0;
+        if ((ur = recv(target, (&expected) + received, 2 - received, 0)) == 0)
         {
-            // Connection closed, error, or newline encountered
-            if (received == 0 && ur <= 0) {
-                // No data received
-                return -1;
-            }
-
-            charBuffer[received] = '\0'; // Null-terminate the string
-            return received;
+            close(target);
+            return -1;
         }
-
-        received++;
+        received += ur;
     }
-
-    // Message length exceeds the maximum allowed
-    charBuffer[MAX_MESSAGE_LENGTH - 1] = '\0'; // Null-terminate the string
-    return MAX_MESSAGE_LENGTH - 1;
+    received = 0;
+    while (received < expected)
+    {
+        int ur = 0;
+        if ((ur = recv(target, buffer, expected - received, 0)) == 0)
+        {
+            memset(buffer, 0, received);
+            close(target);
+            return -1;
+        }
+        received += ur;
+    }
+    return received;
 }
 
 /* Try to send message to remote host.
@@ -87,6 +85,17 @@ Returns:
 int isend(int target, void *buffer, unsigned short length)
 {
     int sent = 0;
+    while (sent < 2)
+    {
+        int us = 0;
+        if ((us = send(target, (&length) + sent, 2 - sent, 0)) == 0)
+        {
+            close(target);
+            return -1;
+        }
+        sent += us;
+    }
+    sent = 0;
     while (sent < length)
     {
         int us = 0;
