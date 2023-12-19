@@ -111,8 +111,6 @@ void serve_client(int client, struct sockaddr_in *addr)
         int received = ireceive(client, data);
         if (received < 0)
             return;
-        printf("INFO: data: %s\n",
-               data);
 
 #ifdef ENABLE_CRYPTO
 
@@ -120,27 +118,27 @@ void serve_client(int client, struct sockaddr_in *addr)
         int length = decrypt_aes128((const unsigned char *)data, received, ENC_AES_KEY, (unsigned char *)decrypted);
         if (length < 0)
             return;
-        printf("DEBUG: decrypted message %s", decrypted);
+        printf("-> %s", decrypted);
 
         reverse_string(decrypted, length - 1);
 
         memset(data, 0, received);
-        int send = encrypt_aes128((const unsigned char *)decrypted, length, ENC_AES_KEY, (unsigned char *)data);
-        printf("DEBUG: encrypted message with %i size\n", send);
+        // int send = encrypt_aes128((const unsigned char *)decrypted, length, ENC_AES_KEY, (unsigned char *)data);
+        // printf("DEBUG: encrypted message with %i size\n", send);
 
 #else
-
-        reverse_string(data, received - 1);
-        int send = received;
+        printf("-> %s\n", data);
+        // reverse_string(data, received - 1);
+        // int send = received;
 
 #endif
 
-        if (isend(client, data, send) < 0)
-            return;
-        printf("INFO: sent %i bytes to %s:%i\n",
-               send,
-               inet_ntoa(addr->sin_addr),
-               addr->sin_port);
+        // if (isend(client, data, send) < 0)
+        //     return;
+        // printf("INFO: sent %i bytes to %s:%i\n",
+        //        send,
+        //        inet_ntoa(addr->sin_addr),
+        //        addr->sin_port);
 
         memset(data, 0, send);
     }
