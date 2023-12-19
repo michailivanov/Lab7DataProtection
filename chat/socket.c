@@ -48,12 +48,13 @@ Returns:
 int ireceive(int target, void *buffer)
 {
     int received = 0;
+    char *charBuffer = (char *)buffer; // Type cast void * to char *
 
     while (received < MAX_MESSAGE_LENGTH)
     {
-        int ur = recv(target, buffer + received, 1, 0);
+        int ur = recv(target, charBuffer + received, 1, 0);
 
-        if (ur <= 0 || buffer[received] == '\n')
+        if (ur <= 0 || charBuffer[received] == '\n')
         {
             // Connection closed, error, or newline encountered
             if (received == 0 && ur <= 0) {
@@ -61,7 +62,7 @@ int ireceive(int target, void *buffer)
                 return -1;
             }
 
-            buffer[received] = '\0'; // Null-terminate the string
+            charBuffer[received] = '\0'; // Null-terminate the string
             return received;
         }
 
@@ -69,7 +70,7 @@ int ireceive(int target, void *buffer)
     }
 
     // Message length exceeds the maximum allowed
-    buffer[MAX_MESSAGE_LENGTH - 1] = '\0'; // Null-terminate the string
+    charBuffer[MAX_MESSAGE_LENGTH - 1] = '\0'; // Null-terminate the string
     return MAX_MESSAGE_LENGTH - 1;
 }
 
