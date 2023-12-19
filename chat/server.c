@@ -83,7 +83,7 @@ void send_to_client(int client, struct sockaddr_in *addr)
 
     while (1)
     {
-        printf(">> ");
+        // printf(">> ");
         fgets(data, 1024, stdin);
         unsigned short size = strlen(data);
 
