@@ -24,7 +24,7 @@ void send_to_server(int sock)
     char buffer[65535] = {0};
     while (1)
     {
-        printf(">> ");
+        // printf(">> ");
         fgets(buffer, sizeof(buffer), stdin);
         unsigned short size = strlen(buffer);
 
