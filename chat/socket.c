@@ -1,4 +1,5 @@
 #include "socket.h"
+#define MAX_MESSAGE_LENGTH 80
 
 /* Create a socket and try to bind it to given address.
 
@@ -34,36 +35,14 @@ int iconnect(const char *address, in_port_t port, SocketOperator operate)
     return sock;
 }
 
-/* Try to receive assigned bytes from remote host.
-
-This function will block process when it got insuffient data from client.
-Try to read 2 bytes as indicator of message length form remote host then message body.
-
-Returns:
-    message_size if received successfully.
-    -1           if client already closed socket.
-*/
 int ireceive(int target, void *buffer)
 {
     int received = 0;
-    unsigned short expected;
-    while (received < 2)
+    while (received < MESSAGE_SIZE)
     {
-        int ur = 0;
-        if ((ur = recv(target, (&expected) + received, 2 - received, 0)) == 0)
+        int ur = recv(target, (char *)buffer + received, MESSAGE_SIZE - received, 0);
+        if (ur <= 0)
         {
-            close(target);
-            return -1;
-        }
-        received += ur;
-    }
-    received = 0;
-    while (received < expected)
-    {
-        int ur = 0;
-        if ((ur = recv(target, buffer, expected - received, 0)) == 0)
-        {
-            memset(buffer, 0, received);
             close(target);
             return -1;
         }
@@ -72,34 +51,18 @@ int ireceive(int target, void *buffer)
     return received;
 }
 
-/* Try to send message to remote host.
-
-This function will send 2 bytes head as indicator of message length then message body.
-
-See `ireceive` function.
-
-Returns:
-    message_size if send successfully.
-    -1           if client already closed socket.
-*/
 int isend(int target, void *buffer, unsigned short length)
 {
+    // Дополнение сообщения до 80 символов
+    char paddedMessage[MESSAGE_SIZE];
+    memset(paddedMessage, 0, MESSAGE_SIZE);
+    memcpy(paddedMessage, buffer, length > MESSAGE_SIZE ? MESSAGE_SIZE : length);
+
     int sent = 0;
-    while (sent < 2)
+    while (sent < MESSAGE_SIZE)
     {
-        int us = 0;
-        if ((us = send(target, (&length) + sent, 2 - sent, 0)) == 0)
-        {
-            close(target);
-            return -1;
-        }
-        sent += us;
-    }
-    sent = 0;
-    while (sent < length)
-    {
-        int us = 0;
-        if ((us = send(target, buffer, length - sent, 0)) == 0)
+        int us = send(target, paddedMessage + sent, MESSAGE_SIZE - sent, 0);
+        if (us <= 0)
         {
             close(target);
             return -1;
