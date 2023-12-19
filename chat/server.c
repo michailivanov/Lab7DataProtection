@@ -118,7 +118,7 @@ void serve_client(int client, struct sockaddr_in *addr)
         int length = decrypt_aes128((const unsigned char *)data, received, ENC_AES_KEY, (unsigned char *)decrypted);
         if (length < 0)
             return;
-        printf("\n%s", decrypted);
+        printf("%s", decrypted);
 
         reverse_string(decrypted, length - 1);
 
@@ -127,7 +127,7 @@ void serve_client(int client, struct sockaddr_in *addr)
         // printf("DEBUG: encrypted message with %i size\n", send);
 
 #else
-        printf("\n%s\n", data);
+        printf("%s\n", data);
         // reverse_string(data, received - 1);
         int send = received;
 
