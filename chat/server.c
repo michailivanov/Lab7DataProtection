@@ -105,14 +105,13 @@ void serve_client(int client, struct sockaddr_in *addr)
         int length = decrypt_aes128((const unsigned char *)data, received, ENC_AES_KEY, (unsigned char *)decrypted);
         if (length < 0)
             return;
+        memset(data, 0, received);
         printf("%s", decrypted);
         
 #else
         printf("%s", data);
-
-#endif
-        
         memset(data, 0, received);
+#endif
     }
 }
 
